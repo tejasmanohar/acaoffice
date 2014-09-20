@@ -9,7 +9,7 @@ Bundler.require
 
 # Configure database
 configure do
-  FB_Firebase = Firebase::Client.new(ENV['FB_URL'], ENV['FB_SECRET'])
+  FB_Firebase = Firebase::Client.new(ENV['FB_URL'])
 end
 
 get '/' do

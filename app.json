@@ -8,10 +8,6 @@
     "FB_URL": {
       "description": "Firebase app URL",
       "required": true
-    },
-    "FB_SECRET": {
-      "description": "FB Secret Key",
-      "required": true
     }
   }
 }

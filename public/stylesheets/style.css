@@ -1,6 +1,13 @@
 body#index {
-    color: rgb(255, 255, 255);
-    position: relative;
-    min-height: 350px;
-    background: url("http://i.imgur.com/LJ5FpTf.png") no-repeat scroll 0px 100% / cover   transparent;  
+  background: url("http://startbootstrap.com/templates/stylish-portfolio/img/bg.jpg") no-repeat center center scroll;
+  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica,Arial, sans-serif;
+  text-align: center;
+}
+
+h1#index {
+  vertical-align: middle;
+  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica,Arial, sans-serif;
+  font-size: 4.5em;
+  font-weight: 700;
+  color: #333;
 }
