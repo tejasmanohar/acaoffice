@@ -4,6 +4,7 @@ require 'bundler'
 require 'firebase'
 require 'json'
 require 'net/http'
+require './environments'
 Bundler.require
 
 # Configure database

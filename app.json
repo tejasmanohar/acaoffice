@@ -1,0 +1,17 @@
+{
+  "name": "acaoffice",
+  "description": "collaborate on your academic presentations in the cloud",
+  "repository": "https://github.com/tejas-manohar/acaoffice",
+  "keywords": ["ruby", "sinatra", "firebase", "academic", "office", "drive", "collaboration"],
+  "website": "http://acaoffice.herokuapp.com",
+  "env": {
+    "FB_URL": {
+      "description": "Firebase app URL",
+      "required": true
+    },
+    "FB_SECRET": {
+      "description": "FB Secret Key",
+      "required": true
+    }
+  }
+}
