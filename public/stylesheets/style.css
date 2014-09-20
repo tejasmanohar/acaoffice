@@ -4,10 +4,15 @@ body#index {
   text-align: center;
 }
 
-h1#index {
-  vertical-align: middle;
+h1 {
   font-family: "Source Sans Pro", "Helvetica Neue", Helvetica,Arial, sans-serif;
   font-size: 4.5em;
   font-weight: 700;
   color: #333;
+}
+
+.text-vertical-center {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
 }
