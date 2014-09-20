@@ -22,13 +22,10 @@ get '/' do
 end
 
 post '/new' do
-  unless params[:name].nil?
     name = params[:name]
-  else
-    name = (0...50).map { ('a'..'z').to_a[rand(6)] }.join
-  end
     meet = params[:meet]
-    FB_Firebase.push('meetings', { :name => name, :meet => meet })
+    token = params[:token]
+    FB_Firebase.push('meetings', { :name => name, :meet => meet, :token => token })
 end
 
 get '/moxtra' do

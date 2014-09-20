@@ -15,7 +15,7 @@
       <form method='post' id='new'>
         <input type="text" id="name" style="width:250px; margin:25px auto;" class="form-control" placeHolder="Meeting Name (optional)">
         <div style="margin-top:25px;">
-          <button type="submit" class="btn btn-warning">Let's Go!</button>
+          <button type="submit" class="btn btn-warning" id="submit">Let's Go!</button>
         </div>
       </form>
     
@@ -46,7 +46,19 @@
         <!-- Initialize user and get access token -->
         <script type="text/javascript">
             function get_token() {
+              makeid = function() {
+                var text = "";
+                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                for( var i=0; i < 6; i++ )
+                  text += possible.charAt(Math.floor(Math.random() * possible.length));
+                return text;
+              }
+              if($("#name").length > 1) {
                 unique_id = $("#name").val().replace(/ /g,'');
+              }
+              else {
+                unique_id = makeid().replace(/ /g,'');
+              }
                 timestamp = new Date().getTime();
                 hash = CryptoJS.HmacSHA256(client_id + unique_id + timestamp, client_secret);
                 hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
@@ -70,7 +82,6 @@
   
   <script>
     function start_meet(access_token) {
-      alert("start meet");
       var meet_options = {
           iframe: true, //To open the meet in the same window within an iFrame.
           // tab: true, //To open the meet in a new browser tab, N/A if iframe option is set to true.
@@ -85,8 +96,19 @@
               console.log(event);
               console.log("Meet Started - session_id: "+event.session_id+"session_key: "+event.session_key);
               //Your application server can upload files to meet using the session_id and session_key
-              
-              name = $("#name").val().replace(/ /g,'');
+              makeid = function() {
+                var text = "";
+                var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                for( var i=0; i < 6; i++ )
+                  text += possible.charAt(Math.floor(Math.random() * possible.length));
+                return text;
+              }
+              if($("#name").length > 1) {
+                name = $("#name").val().replace(/ /g,'');
+              }
+              else {
+                name = makeid().replace(/ /g,'');
+              }
              $.post('/new',
              {
                name: name,
@@ -95,6 +117,8 @@
              function (result) {
                if (result) {
                  console.log("stored name " + name + " session key " + meet);
+                 $("#submit").removeClass("disabled");
+                 $("#submit").text("Let's Go!");
                }
              });
             
@@ -110,16 +134,28 @@
     }
     
     $(document).ready(function() {
+      makeid = function() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for( var i=0; i < 6; i++ )
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+      }
       $("#new").submit(function() {
         var name = $("#name").val();
+        $("#submit").addClass("disabled");
+        $("#submit").text("Loading..");
         
         // check if meet name exists on firebase
+        if(!(name)) {
+          name = makeid();
+        }
+        
         $.post('/api',
         {
           name: name
-        },function (result) {
+        }, function (result) {
           if (result) {
-            // create new token & meet on callback
             get_token();
           }
         });

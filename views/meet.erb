@@ -2,7 +2,9 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-
+        <link rel='stylesheet' type='text/css' href='libs/bootstrap.min.css' />
+        <link rel='stylesheet' type='text/css' href='stylesheets/style.css' />
+      
         <!-- Include Moxtra JavaScript Library -->
         <script type="text/javascript" src="https://www.moxtra.com/api/js/moxtra-latest.js" id="moxtrajs" data-client-id="ixrzAE6AUYQ"></script>
 
@@ -21,6 +23,8 @@
             var hash = CryptoJS.HmacSHA256(client_id + unique_id + timestamp, client_secret);
             var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
             var signature = hashInBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+          
+            var name = '';
             // ]]>
         </script>
         
@@ -29,6 +33,7 @@
             function get_token() {
                 var init_options = {
                     uniqueid: unique_id,
+                    firstname: name,
                     timestamp: timestamp,
                     signature: signature,
                     get_accesstoken: function(result) {
@@ -57,11 +62,7 @@
                 },
                 access_token: access_token,
                 start_meet: function(event) {
-                    console.log(event);
                     console.log("Meet Started - session_id: "+event.session_id+"session_key: "+event.session_key);
-                  $.post("http://acaoffice-147742.use1-2.nitrousbox.com/get-key", {
-                    id: event.session_key
-                  });
                     //Your application server can upload files to meet using the session_id and session_key
                 },
                 error: function(event) {
@@ -72,88 +73,36 @@
                 }
             };
             Moxtra.meet(meet_options);
-        }
-
-        function start_clip(access_token) {
-            var clip_options = {
-                iframe: true, //To open the clip in the same window within an iFrame.
-                tagid4iframe: "clip-container",
-                iframewidth: "1000px",
-                iframeheight: "750px",
-                access_token: access_token,
-                start_note: function(event) {
-                    console.log("Clip Started - session_id: "+event.session_id+"session_key: "+event.session_key);
-                    //Your application server can upload files to clip using the session_id and session_key
-                },
-                error: function(event) {
-                    console.log("error code: " + event.error_code + " message: " + event.error_message);
-                },
-                save_note: function(event) {
-                    console.log("Share URL: " + event.share_url + " Binder ID: " + event.destination_binder_id);
-                }
-            };
-            Moxtra.note(clip_options);
-        }
-
-        function start_draw(access_token) {
-            var draw_options = {
-                iframe: true, //To open the draw screen in the same window within an iFrame.
-                tagid4iframe: "draw-container",
-                iframewidth: "1000px",
-                iframeheight: "750px",
-                access_token: access_token,
-                start_annotate: function(event) {
-                    console.log("Draw Started - session_id: "+event.session_id+"binder_id: "+event.binder_id);
-                    //Your application server can upload files to draw using the binder_id and access_token
-                },
-                error: function(event) {
-                    console.log("error code: " + event.error_code + " message: " + event.error_message);
-                },
-                stop_annotate: function(event) {
-                    console.log("Share URL: " + event.share_url + " Binder ID: " + event.binder_id + " Download URL: " + event.download_url);
-                }
-            };
-            Moxtra.annotate(draw_options);
-        }
-
-        function start_chat (access_token) {            
-            var chat_options = {
-                //unique id of the users who will be part of the chat. These users should already exist in Moxtra.
-                unique_id: "unique_user_id_2,unique_user_id_3",  
-                iframe: true,
-                tagid4iframe: "container",
-                iframewidth: "1000px",
-                iframeheight: "750px",                
-                access_token: access_token,
-                autostart_meet: true,
-                autostart_note: true,
-                extension: { "show_dialogs": { "member_invite": true } },
-                start_chat: function(event) {
-                    console.log("Chat started binder ID: " + event.binder_id);
-                    //Your application server can upload files to draw using the binder_id and access_token
-                },
-                start_meet: function(event) {
-                    console.log("Meet started session key: " + event.session_key + " session id: " + event.session_id);
-                },
-                end_meet: function(event) {
-                    console.log("Meet end event");
-                },
-                invite_member: function(event) {
-                    console.log("Invite member into binder Id: " + event.binder_id);
-                },
-                request_note: function(event) {
-                    console.log("Note start request");
-                },
-                error: function(event) {
-                    console.log("Chat error code: " + event.error_code + " error message: " + event.error_message);
-                }
-            };            
-            Moxtra.chat(chat_options);
-        }
+        } 
         </script>
             
     </head>
     <body>
-        <h3><a id="getToken" href="javascript:get_token();">Moxtra Meet</a></h3>
+        <div class="container text-center">
+            <h1 style="margin-top:75px">AcaOffice</h1>
+            <img src="media/images/logo.png" width="150">
+            <h4>
+              Enter your screen name:
+            </h4>
+            <form id="name-form" class="text-center">
+              <input placeHolder="Screen Name" class="form-control" id="screen-name" style="width:250px; margin:10px auto;">
+              <button type="submit" class="btn btn-warning">Let me in!</button>
+            </form>
+        </div>
     </body>
+    
+    <script>
+      $("#name-form").submit(function() {
+        // need to check for valid screen name
+        var screenName = ("#screen-name").val().trim();
+        
+        if (screenName != "") {
+          name= screenName;
+          get_token();
+        }
+        return false;
+      });
+      
+    </script>
+  
 </html>
