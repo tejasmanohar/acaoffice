@@ -10,11 +10,124 @@
   </head>
 <body id='index'>
   <div class="container">
-    <form action='/new' method='post'>
-      <input type="text" name="name">
-      <input type="submit" value="Submit">
-    </form>
+      <h1 style="margin-top:75px">AcaOffice</h1>
+      <img src="media/images/logo.png" width="150">
+      <form method='post' id='new'>
+        <input type="text" id="name" style="width:250px; margin:25px auto;" class="form-control" placeHolder="Meeting Name (optional)">
+        <div style="margin-top:25px;">
+          <button type="submit" class="btn btn-warning">Let's Go!</button>
+        </div>
+      </form>
+    
 <a href='https://github.com/tejas-manohar/acaoffice'><img style='position: absolute; top: 0; left: 0;   border: 0;'   src='https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67' alt='Fork me on GitHub' data-canonical-src='https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png'></a>
   </div>
+  
+  <!-- Include Moxtra JavaScript Library -->
+        <script type="text/javascript" src="https://www.moxtra.com/api/js/moxtra-latest.js" id="moxtrajs" data-client-id="ixrzAE6AUYQ"></script>
+
+        <!-- Include External JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js"></script>
+        <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
+
+        <!-- Create Signature -->
+        <script type="text/javascript">// <![CDATA[
+            var client_id = "ixrzAE6AUYQ";
+            var client_secret = "tAEJWZD9Hio";
+            var timestamp = new Date().getTime();
+            var unique_id = "unique_user_id"; //Unique ID of how user is identified in your system
+            
+            var hash = CryptoJS.HmacSHA256(client_id + unique_id + timestamp, client_secret);
+            var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+            var signature = hashInBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+            // ]]>
+        </script>
+        
+        <!-- Initialize user and get access token -->
+        <script type="text/javascript">
+            function get_token() {
+                unique_id = $("#name").val().replace(/ /g,'');
+                timestamp = new Date().getTime();
+                hash = CryptoJS.HmacSHA256(client_id + unique_id + timestamp, client_secret);
+                hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
+                signature = hashInBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+              
+                var init_options = {
+                    uniqueid: unique_id,
+                    timestamp: timestamp,
+                    signature: signature,
+                    get_accesstoken: function(result) {
+                        console.log("access_token: " + result.access_token + " expires in: " + result.expires_in);
+                        start_meet(result.access_token);
+                    },
+                    error: function(result) {
+                        console.log("error code: " + result.error_code + " message: " + result.error_message);
+                    }
+                };
+                Moxtra.setup(init_options);
+            }
+        </script>
+  
+  <script>
+    function start_meet(access_token) {
+      alert("start meet");
+      var meet_options = {
+          iframe: true, //To open the meet in the same window within an iFrame.
+          // tab: true, //To open the meet in a new browser tab, N/A if iframe option is set to true.
+          tagid4iframe: "meet-container",
+          iframewidth: "1000px",
+          iframeheight: "750px",
+          extension: { 
+              "show_dialogs": { "meet_invite": true } 
+          },
+          access_token: access_token,
+          start_meet: function(event) {
+              console.log(event);
+              console.log("Meet Started - session_id: "+event.session_id+"session_key: "+event.session_key);
+              //Your application server can upload files to meet using the session_id and session_key
+              
+              name = $("#name").val().replace(/ /g,'');
+             $.post('/new',
+             {
+               name: name,
+               meet: event.session_key
+             },
+             function (result) {
+               if (result) {
+                 console.log("stored name " + name + " session key " + meet);
+               }
+             });
+            
+          },
+          error: function(event) {
+              console.log("error code: " + event.error_code + " message: " + event.error_message);
+          },
+          end_meet: function(event) {
+              console.log("Meet Ended");
+          }
+      };
+      Moxtra.meet(meet_options);
+    }
+    
+    $(document).ready(function() {
+      $("#new").submit(function() {
+        var name = $("#name").val();
+        
+        // check if meet name exists on firebase
+        $.post('/api',
+        {
+          name: name
+        },function (result) {
+          if (result) {
+            // create new token & meet on callback
+            get_token();
+          }
+        });
+         
+        return false;
+      });
+    });
+
+  </script>
 </body>
 </html>
