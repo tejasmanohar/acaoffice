@@ -112,7 +112,8 @@
              $.post('/new',
              {
                name: name,
-               meet: event.session_key
+               meet: event.session_key,
+               token: event.access_token
              },
              function (result) {
                if (result) {
