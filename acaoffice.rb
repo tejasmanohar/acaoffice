@@ -24,8 +24,7 @@ end
 post '/new' do
     name = params[:name]
     meet = params[:meet]
-    token = params[:token]
-    FB_Firebase.push('meetings', { :name => name, :meet => meet, :token => token })
+    FB_Firebase.push('meetings', { :name => name, :meet => meet})
 end
 
 get '/moxtra' do
